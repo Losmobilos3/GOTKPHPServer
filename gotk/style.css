@@ -1,0 +1,11 @@
+th, td {
+    width: 10cm;
+    border: 1px solid black;
+    text-align: center;
+    /*background-color: brown;*/
+}
+
+table{
+    margin: auto;
+    border: 4px solid black;
+}
