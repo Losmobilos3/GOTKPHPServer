@@ -9,7 +9,6 @@
     # $_GET[i] gets the parameters given in the URL
     # Takes raw data from the request
     $json = file_get_contents('php://input');
-    #echo $json;
     $data = json_decode($json);
     $ts = $data->timestamp;
     $et = $data->eventType;
@@ -20,4 +19,6 @@
     # Converts the URL to a DB-insetion
     $sql = "INSERT INTO gotkdata (timeStamp, eventType) VALUES ($ts, '$et');";
     $conn->query($sql);
+
+    echo "True";
 ?>
