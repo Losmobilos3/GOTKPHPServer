@@ -62,64 +62,165 @@ function convertTimestamp(timestamp) {
     return formattedDateTime;
 }
 
+function convertTimestampOnCurrentDay(timestamp) {
+    // Create a new Date object with the timestamp (in milliseconds)
+    var date = new Date(timestamp * 1000);
+
+    return date.getHours() + (date.getMinutes() + date.getSeconds()/60)/60;
+}
+
 function plotData(xAxis, stoveData, citizenData) {
     for (let i = 0; i < xAxis.length; i++) {
-        xAxis[i] = convertTimestamp(xAxis[i])
+        xAxis[i] = convertTimestampOnCurrentDay(xAxis[i])
     }
 
-    new Chart("myChart", {
-        type: "line",
-        data: {
-            labels: xAxis,
-            datasets: [
-            {
-                label: 'StoveOn',
-                data: stoveData,
-                fill: true,
-                borderColor: 'rgb(0,0,0)',
-                tension: 0.1,
-                backgroundColor: 'rgba(0,0,0,0.2)',
-                steppedLine: 'before',
-            },
-            {
-                label: 'CitizenInKitchen',
-                data: citizenData,
-                fill: true,
-                borderColor: 'rgb(0,100,0)',
-                tension: 0.1,
-                backgroundColor: 'rgba(0,100,0,0.2)',
-                steppedLine: 'before',
-            }
-        ]
-        },
-        options: {
-            animation: {
-                duration: 0
-            },
-            scales: {
-                xAxes: [{
-                    gridLines: { color: "#131c2b" },
-                    ticks: { fontColor: '#000000' } // Change x-axis label color to black
-                }],
-                yAxes: [{
-                    display: true,
-                    gridLines: { color: "#131c2b" },
-                    ticks: {
-                        fontColor: '#000000',
-                        suggestedMin: 0,    // minimum will be 0, unless there is a lower value.
-                        // OR //
-                        beginAtZero: true,   // minimum value will be 0.
-                    }
-                }]
-            },
-            legend: {
-                labels: {
-                    fontColor: '#000000' // Change legend text color to black
-                }
-            }
-        },  
-    },
-    );
+    // Sample data with irregular x-coordinates
+    let dataStove = [];
+
+    for (let i = 0; i < xAxis.length; i++) {
+        if (i != 0 && stoveData[i] != stoveData[i-1]) {
+            dataStove.push({x: xAxis[i], y: stoveData[i-1] });
+            dataStove.push({x: xAxis[i], y: stoveData[i] });
+        } else {
+            dataStove.push({x: xAxis[i], y: stoveData[i] });
+        }
+    }
+
+    let dataCitizen = [];
+
+    for (let i = 0; i < xAxis.length; i++) {
+        if (i != 0 && citizenData[i] != citizenData[i-1]) {
+            dataCitizen.push({x: xAxis[i], y: citizenData[i-1] });
+            dataCitizen.push({x: xAxis[i], y: citizenData[i] });
+        } else {
+            dataCitizen.push({x: xAxis[i], y: citizenData[i] });
+        }
+    }
+
+    const margin = { top: 20, right: 20, bottom: 30, left: 50 },
+        width = (window.innerWidth*0.8) - margin.left - margin.right,
+        height = 200 - margin.top - margin.bottom;
+
+    // Create scales for x and y axes
+    const xScale = d3.scaleLinear()
+        .domain([d3.min(dataStove, d => d.x), d3.max(dataStove, d => d.x)])
+        .range([0, width]);
+
+    const yScale = d3.scaleLinear()
+        .domain([0, d3.max(dataCitizen, d => d.y)])
+        .range([height, 0]);
+
+    // Create a line generator
+    const line = d3.line()
+        .x(d => xScale(d.x))
+        .y(d => yScale(d.y));
+
+    const area = d3.area()
+        .x(d => xScale(d.x))
+        .y0(height)
+        .y1(d => yScale(d.y));
+
+    d3.select("svg").remove();
+
+    // Create SVG element
+    const svg = d3.select('body')
+        .select('.graphContainer')
+        .append("svg")
+        .classed("center", true) 
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // Append gridlines to the chart
+    svg.append("g")
+        .attr("class", "grid")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(xScale)
+            .ticks(10)
+            .tickSize(-height)
+            .tickFormat("")
+        );
+
+    svg.append("g")
+        .attr("class", "grid")
+        .call(d3.axisLeft(yScale)
+            .ticks(5)
+            .tickSize(-width)
+            .tickFormat("")
+        );
+
+    // Append x-axis
+    svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(xScale));
+
+    // Append y-axis
+    svg.append("g")
+        .call(d3.axisLeft(yScale));
+
+    // Append the area to the SVG
+    svg.append("path")
+        .datum(dataStove)
+        .attr("class", "area")
+        .attr("fill", "rgba(0, 0, 100, 0.3)")
+        .attr("d", area);
+
+    // Append the line to the SVG
+    svg.append('path')
+        .datum(dataStove)
+        .attr('fill', 'none')
+        .attr('stroke', 'steelblue')
+        .attr('stroke-width', 2)
+        .attr('d', line);
+
+    // Append the area to the SVG
+    svg.append("path")
+        .datum(dataCitizen)
+        .attr("class", "area")
+        .attr("fill", "rgba(0, 100, 0, 0.3)")
+        .attr("d", area);
+
+    // Append the line to the SVG
+    svg.append('path')
+        .datum(dataCitizen)
+        .attr('fill', 'none')
+        .attr('stroke', 'rgba(0, 150, 0, 1')
+        .attr('stroke-width', 2)
+        .attr('d', line);
+
+
+    // Append legend
+    const legend = svg.append("g")
+        .attr("class", "legend")
+        .attr("transform", "translate(" + (width - 200) + "," + 20 + ")");
+
+    legend.append("rect")
+        .attr("x", 0)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", "rgba(0, 0, 100, 0.3)");
+
+    legend.append("text")
+        .attr("x", 25)
+        .attr("y", 9)
+        .attr("dy", ".35em")    
+        .style("text-anchor", "start")
+        .text("Stove-On (if > 0)");
+
+    legend.append("rect")
+        .attr("x", 0)
+        .attr("y", 20)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", "rgba(0, 100, 0, 0.3)");
+
+    legend.append("text")
+        .attr("x", 25)
+        .attr("y", 29)
+        .attr("dy", ".35em")
+        .style("text-anchor", "start")
+        .text("Citizen in kitchen (if > 0)");
 }
 
 //! Denne skal rettes til
@@ -183,9 +284,6 @@ function updateFrequency(generatedStoveData, xAxis) {
     }
     freq = totalOnTime/(xAxis[xAxis.length-1] - xAxis[0]) * 100;
 
-    console.log(totalOnTime);
-    console.log(xAxis[xAxis.length-1] - xAxis[0]);
-
     // Get the reference to the <p> element with id "freq"
     var freqElement = document.getElementById("freq");
 
@@ -240,6 +338,4 @@ plotAndGenerateData()
 setInterval(plotAndGenerateData, 1000);
 
 // plottableData = generateDataForGraph();
-
-// console.log(plottableData.xAxis);
 
