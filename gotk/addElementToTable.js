@@ -3,6 +3,12 @@ const url = 'http://' + window.location.host + '/getCollectedData/';
 
 latestIndex = -1;
 
+function removePrefixHeucod(text) {
+    let lastIndex = text.lastIndexOf(".");
+    let result = text.substring(lastIndex + 1);
+    return result;
+}
+
 function addRowsToTable() {
     // Make a GET request using fetch
     fetch(url)
@@ -34,7 +40,7 @@ function addRowsToTable() {
                     // Populate cells with data
                     cell1.innerHTML = item.id;
                     cell2.innerHTML = convertTimestamp(item.timeStamp);
-                    cell3.innerHTML = item.eventType;
+                    cell3.innerHTML = removePrefixHeucod(item.eventType);
 
                     // Saves the last index
                     latestIndex = i;
@@ -161,21 +167,6 @@ function plotData(xAxis, stoveData, citizenData) {
 
     // Append the area to the SVG
     svg.append("path")
-        .datum(dataStove)
-        .attr("class", "area")
-        .attr("fill", "rgba(0, 0, 100, 0.3)")
-        .attr("d", area);
-
-    // Append the line to the SVG
-    svg.append('path')
-        .datum(dataStove)
-        .attr('fill', 'none')
-        .attr('stroke', 'steelblue')
-        .attr('stroke-width', 2)
-        .attr('d', line);
-
-    // Append the area to the SVG
-    svg.append("path")
         .datum(dataCitizen)
         .attr("class", "area")
         .attr("fill", "rgba(0, 100, 0, 0.3)")
@@ -189,6 +180,21 @@ function plotData(xAxis, stoveData, citizenData) {
         .attr('stroke-width', 2)
         .attr('d', line);
 
+
+    // Append the area to the SVG
+    svg.append("path")
+        .datum(dataStove)
+        .attr("class", "area")
+        .attr("fill", "rgba(0, 0, 100, 0.3)")
+        .attr("d", area);
+
+    // Append the line to the SVG
+    svg.append('path')
+        .datum(dataStove)
+        .attr('fill', 'none')
+        .attr('stroke', 'steelblue')
+        .attr('stroke-width', 2)
+        .attr('d', line);
 
     // Append legend
     const legend = svg.append("g")
@@ -282,7 +288,7 @@ function updateFrequency(generatedStoveData, xAxis) {
             totalOnTime += xAxis[i+1] - xAxis[i];
         }
     }
-    freq = totalOnTime/(xAxis[xAxis.length-1] - xAxis[0]) * 100;
+    freq = totalOnTime/(24*60*60) * 100;
 
     // Get the reference to the <p> element with id "freq"
     var freqElement = document.getElementById("freq");

@@ -35,13 +35,16 @@
  {
    $url = "http://127.0.0.1/getCollectedData/";
    $response = file_get_contents($url);
+   $data = json_decode($response, true);
 
-   $parts = explode(" ", $response);
+   if (array_key_exists('message', $data))
+      return array();
 
+   // If DB not empty, create list
    $rows = array();
 
-   for ($i = 0; $i < count($parts) - 1; $i +=3) {      
-      $rows[] = array($parts[$i], $parts[$i+1], $parts[$i+2]);
+   for ($i = 0; $i < count($data); $i++) {      
+      $rows[] = array($data[$i]['id'], $data[$i]['timeStamp'], $data[$i]['eventType']);
    }
 
    return $rows;

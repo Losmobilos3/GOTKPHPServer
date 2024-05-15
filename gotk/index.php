@@ -27,7 +27,6 @@ if(!isset($_GET['action']))
             <br><br>
             <br><br>
             <button id="loginBtn" name="loginBtn">Login</button>
-            <button id="createUsr" name="createUsr">Create Account</button>
             <?php
         # Check login button
         if (isset($_POST['loginBtn'])) {
@@ -64,13 +63,5 @@ if(!isset($_GET['action']))
     ?>
         </form>
     </div>
-
-    <?php
-        # Redirects to the create user page if the button is clicked
-        if(isset($_POST["createUsr"])) {
-            header("Location: createUser.php");
-            exit();
-        }
-    ?>
 </body>
 </html>

@@ -20,6 +20,12 @@ th, td {
     display: block;
 }
 
+.error {
+    color: red;
+    font-size: 40;
+    font-weight: bold;
+}
+
 
 table{
     color: azure;
