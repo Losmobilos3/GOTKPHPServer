@@ -75,6 +75,8 @@ function convertTimestampOnCurrentDay(timestamp) {
     return date.getHours() + (date.getMinutes() + date.getSeconds()/60)/60;
 }
 
+
+
 function plotData(xAxis, stoveData, citizenData) {
     for (let i = 0; i < xAxis.length; i++) {
         xAxis[i] = convertTimestampOnCurrentDay(xAxis[i])
@@ -229,6 +231,8 @@ function plotData(xAxis, stoveData, citizenData) {
         .text("Citizen in kitchen (if > 0)");
 }
 
+
+
 //! Denne skal rettes til
 async function generateDataForGraph() {
     returnData = {
@@ -342,6 +346,4 @@ plotAndGenerateData()
 
 // Updates graph
 setInterval(plotAndGenerateData, 1000);
-
-// plottableData = generateDataForGraph();
 

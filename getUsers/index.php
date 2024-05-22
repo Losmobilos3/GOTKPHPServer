@@ -17,6 +17,7 @@
             // You can echo other columns as needed
         }
     } else {
+        # Give unique reply if no results are found
         echo "0 results";
     }
 ?>

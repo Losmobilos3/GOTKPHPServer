@@ -1,22 +1,26 @@
 <?php
- function OpenCon()
- {
-    $dbhost = "localhost"; // Host-Address
-    $dbuser = "testBruger"; // username for DBuser
-    $dbpass = "test"; // password for DBuser
-    $db = "testBruger"; // database name
-    
-    $conn = new mysqli($dbhost, $dbuser, $dbpass,$db)
-        or die("Connect failed: %s\n". $conn -> error);
-    return $conn;
- }
- function CloseCon($conn)
- {
-    $conn -> close();
- }
+// Opens a connection to the database and returns an instance to make SQL requests
+function OpenCon()
+{
+# Information for accessing the database
+   $dbhost = "localhost"; // Host-Address
+   $dbuser = "testBruger"; // username for DBuser
+   $dbpass = "test"; // password for DBuser
+   $db = "testBruger"; // database name
+   
+   $conn = new mysqli($dbhost, $dbuser, $dbpass,$db)
+      or die("Connect failed: %s\n". $conn -> error);
+   return $conn;
+}
+// Closes the connection given
+function CloseCon($conn)
+{
+   $conn -> close();
+}
 
- function getUsersFromDB()
- {
+
+function getUsersFromDB()
+{
    $url = "http://127.0.0.1/getUsers/";
    $response = file_get_contents($url);
 
@@ -29,10 +33,10 @@
    }
 
    return $rows;
- }
+}
 
- function getCollectedData()
- {
+function getCollectedData()
+{
    $url = "http://127.0.0.1/getCollectedData/";
    $response = file_get_contents($url);
    $data = json_decode($response, true);
@@ -48,10 +52,10 @@
    }
 
    return $rows;
- }
+}
 
- function addUserToDB($unhash, $pwhash)
- {
+function addUserToDB($unhash, $pwhash)
+{
    $conn = OpenCon();
    if ($conn->connect_error) {
       die("Connection failed: " . $conn->connect_error);
@@ -74,5 +78,5 @@
 
    header("Location: index.php");
    exit();
-   }
+}
 ?>

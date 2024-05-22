@@ -8,16 +8,12 @@
 
     # Takes raw data from the request  
     $json = file_get_contents('php://input');
-    echo $json . "<br>";
-    $data = json_decode($json);
+    $data = json_decode($json); # Parses the JSON
+    # Extracts the elements in the request
     $unhash = $data->unhash;
     $pwhash = $data->pwhash;
-
-    #echo $unhash;
 
     # Insert the registered user into the DB, and switch to login page
     $sql = "INSERT INTO users (unsha256, pwsha256) VALUES ('$unhash', '$pwhash');";
     $result =  $conn->query($sql);
-
-    echo "True";
 ?>
