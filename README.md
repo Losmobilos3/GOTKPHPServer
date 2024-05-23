@@ -35,4 +35,4 @@ Now the database should be good.
 
 Finally, click on start on both Apache and MySQL in the XAMPP Control Panel
 
-The server can now be accessed through the IP-address of the windows machine as follows: "<address>/gotk/"
+The server can now be accessed through the IP-address of the windows machine as follows: "\<address\>/gotk/"
