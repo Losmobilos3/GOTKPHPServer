@@ -284,15 +284,23 @@ addRowsToTable();
 // Updates every 1000 ms
 setInterval(addRowsToTable, 1000);
 
-function updateFrequency(generatedStoveData, xAxis) {
-    let totalOnTime = 0;
+function updateFrequency(generatedStoveData, generatedCitizenData, xAxis) {
+    let totalStoveOnTime = 0;
+    let totalCitizenOnTime = 0;
     let freq = 0;
     for (i = 0; i < generatedStoveData.length-1; i++) {
         if (generatedStoveData[i] == 1) {
-            totalOnTime += xAxis[i+1] - xAxis[i];
+            totalStoveOnTime += xAxis[i+1] - xAxis[i];
         }
     }
-    freq = totalOnTime/(24*60*60) * 100;
+
+    for (i = 0; i < generatedCitizenData.length-1; i++) {
+        if (generatedCitizenData[i] == 2) {
+            totalCitizenOnTime += xAxis[i+1] - xAxis[i];
+        }
+    }
+
+    freq = 100 - totalCitizenOnTime/totalStoveOnTime * 100;
 
     // Get the reference to the <p> element with id "freq"
     var freqElement = document.getElementById("freq");
@@ -333,7 +341,7 @@ function plotAndGenerateData() {
                     plottableData.generatedStoveData.slice(-lenOfData), 
                     plottableData.generatedCitizenData.slice(-lenOfData), 
                 );
-                updateFrequency(plottableData.generatedStoveData.slice(-lenOfData), plottableData.xAxis.slice(-lenOfData));
+                updateFrequency(plottableData.generatedStoveData.slice(-lenOfData), plottableData.generatedCitizenData.slice(-lenOfData), plottableData.xAxis.slice(-lenOfData));
             }
         );
 
