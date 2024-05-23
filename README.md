@@ -31,7 +31,7 @@ CREATE TABLE users (
     pwsha256 VARCHAR(100)
 );
 
-Now the database should be setup correctly.
+Now the database should be set up correctly.
 
 Finally, click on start on both Apache and MySQL in the XAMPP Control Panel
 
