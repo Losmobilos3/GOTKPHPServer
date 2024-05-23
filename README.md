@@ -1,6 +1,6 @@
 To setup the server there are a few steps:
 Setup the server.
-1) Download the XAMPP stack.
+1) Download the XAMPP stack (Follow tutorial 8 from CEP2).
 2) Copy the contents of the repository into the folder "htdocs", which pops up when "Explorer" is clicked in the XAMPP Control Panel.
 
 Setup the database:
@@ -31,7 +31,7 @@ CREATE TABLE users (
     pwsha256 VARCHAR(100)
 );
 
-Now the database should be good.
+Now the database should be setup correctly.
 
 Finally, click on start on both Apache and MySQL in the XAMPP Control Panel
 
